@@ -24,7 +24,7 @@ def user_login(request:Request):
 def validate_login(request:Request,credential:schemas.UserAuth=Depends(schemas.UserAuth.as_form)):
     cursor.execute("SELECT * FROM AUTH WHERE USER_ID=%s ",(credential.user_id,))
     data=cursor.fetchone()
-    if data==None or credential.password != data['password']:
+    if data==None or not utils.verify(credential.password,data['password']):
         raise InvalidCredential()
     return RedirectResponse(url="/",status_code=303)
 
@@ -45,7 +45,7 @@ def validate_user_registration(
         """,
         (
             credential.user_id,
-            credential.password,
+            utils.hash(credential.password),
             credential.contact,
             credential.email,
         ),
