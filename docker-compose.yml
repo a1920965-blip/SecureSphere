@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    container_name: app-dev
+    volumes:
+      - .:/usr/src/app
+    command: sleep infinity
+  db:
+      image: postgres:18
+      container_name: postgres
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: akash123
+        POSTGRES_DB: fastapiDB
+      ports:
+        - "5431:5432"
+      volumes:
+        - /var/lib/postgresql/18/main/
+volumes:
+  postgres_data:
+
+

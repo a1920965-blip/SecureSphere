@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        /* --- 1. RESET & BASICS (Bare Minimum) --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            display: flex; /* Creates the Sidebar + Main Content layout */
+            min-height: 100vh;
+            background-color: #f4f6f8; /* Light grey background is easier on eyes */
+            color: #333;
+        }
+
+        /* --- 2. SIDEBAR (Navigation) --- */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50; /* Dark sidebar for professional contrast */
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .nav-links a {
+            display: block;
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .nav-links a:hover {
+            background-color: #34495e;
+            color: white;
+        }
+
+        .nav-links a.logout {
+            margin-top: auto; /* Pushes logout to the bottom if container has height */
+            color: #e74c3c;
+        }
+
+        /* --- 3. MAIN CONTENT AREA --- */
+        .main-content {
+            flex: 1; /* Takes up remaining space */
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Space between weather and blogs */
+        }
+
+        /* Section: Weather / Greeting */
+        .weather-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #3498db; /* specific accent color */
+        }
+
+        .greeting h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        .greeting p { color: #666; }
+        
+        .weather-info {
+            text-align: right;
+        }
+        .temp { font-size: 2rem; font-weight: bold; }
+
+        /* Section: Blogs */
+        .section-title {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 20px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .blog-card h3 { margin-bottom: 10px; color: #2c3e50; }
+        .blog-card p { font-size: 0.9rem; line-height: 1.5; color: #666; }
+        .read-more {
+            display: inline-block;
+            margin-top: 15px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo">MyService App</div>
+        <div class="nav-links">
+            <a href="#">Profile View</a>
+            <a href="#">My Services</a>
+            <a href="#">File a Complaint</a>
+            <a href="#">About Us</a>
+            <br><br>
+            <a href="#" class="logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        
+        <header class="weather-card" id="weather-section">
+            <div class="greeting">
+                <h1 id="user-greeting">Hello, User!</h1>
+                <p>Here is your daily briefing.</p>
+            </div>
+            <div class="weather-info">
+                <div class="temp" id="weather-temp">24°C</div>
+                <div class="condition" id="weather-desc">Partly Cloudy</div>
+                <small id="city-name">New York, USA</small>
+            </div>
+        </header>
+
+        <section>
+            <h2 class="section-title">Latest Blogs & Updates</h2>
+            
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <h3>System Update v2.0</h3>
+                    <p>We have updated our backend services to handle requests faster. Read more to see what changed in the API.</p>
+                    <a href="#" class="read-more">Read Article →</a>
+                </article>
+
+                <article class="blog-card">
+                    <h3>Maintenance Scheduled</h3>
+                    <p>Please note that server maintenance is scheduled for this Sunday. Services might be intermittent.</p>
+                    <a href="#" class="read-more">Read Article →</a>
+                </article>
+
+                <article class="blog-card">
+                    <h3>New Feature Alert</h3>
+                    <p>We have added a new "Complaint Tracking" feature in your sidebar. Check it out today.</p>
+                    <a href="#" class="read-more">Read Article →</a>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Use this area to fetch your backend API
+        // Example logic:
+        
+        /*
+        fetch('YOUR_BACKEND_ENDPOINT/weather')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('weather-temp').innerText = data.temp;
+                document.getElementById('weather-desc').innerText = data.description;
+                document.getElementById('city-name').innerText = data.city;
+            });
+        */
+    </script>
+</body>
+</html>
