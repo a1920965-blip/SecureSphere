@@ -15,6 +15,22 @@ router=APIRouter(prefix="/user",tags=["User"])
 def user_home_page():
      return "This is user home page this is view after the login"
 
+@router.get('/profile')
+def user_profile(user_id:str):
+cursor.execute("""
+    SELECT 
+        p.*,
+        r.*,
+        v.*
+    FROM PROFILE p
+    LEFT JOIN resident r ON r.OWNER = p.USER_ID
+    LEFT JOIN vehicle v ON v.OWNER = p.USER_ID
+    WHERE p.USER_ID = %s
+""", (user_id,))
+
+result = cursor.fetchone()
+
+    return {"status":True,"data":result}
 #preview login page
 @router.get('/login')
 def user_login(request:Request):
@@ -39,15 +55,26 @@ def validate_user_registration(
 ):
     cursor.execute(
         """
-        INSERT INTO AUTH (USER_ID, PASSWORD, CONTACT, EMAIL)
-        VALUES (%s, %s, %s, %s)
-        RETURNING USER_ID, EMAIL;
+        INSERT INTO AUTH (USER_ID, PASSWORD)
+        VALUES (%s, %s)
+        RETURNING USER_ID,;
         """,
         (
             credential.user_id,
             utils.hash(credential.password),
-            credential.contact,
             credential.email,
+        ),
+    )
+    cursor.execute(
+        """
+        INSERT INTO PROFILE (NAME,CONTACT)
+        VALUES (%s, %s, %s)
+        RETURNING ;
+        """,
+        (
+            credential.name,
+            credential.contact,
+            credential.email
         ),
     )
 
@@ -58,7 +85,6 @@ def validate_user_registration(
         url="/user/login",
         status_code=status.HTTP_303_SEE_OTHER
     )
-     
 # @router.post('/user/register/',response_class=HTMLResponse,status_code=status.HTTP_201_CREATED)
 # def user_register(request:Request,user_Data:schemas.Register_vehicle=Depends(schemas.Register_vehicle.as_form)):
 #     details=None
