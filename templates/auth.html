@@ -74,8 +74,8 @@
         <h2>Login</h2>
 
         <div class="field">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required />
+          <label for="user_id">Username</label>
+          <input type="text" id="user_id" name="user_id" required />
         </div>
 
         <div class="field">
@@ -84,7 +84,9 @@
         </div>
 
         <button type="submit">Login</button>
-
+        {% if error%}
+          <p class="auth_link"> <strong style="color: orange;">Warning:{{error}}</strong></p>
+        {%endif%}
         <p class="auth_link">
           Don’t have an account? <a href="/user/register/">Signup</a>
         </p>
@@ -95,8 +97,8 @@
       <form class="auth_form" method="POST" action="/user/register/">
         <h2>Create An Account</h2>
         <div class="field">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required />
+          <label for="user_id">Username</label>
+          <input type="text" id="user_id" name="user_id" required />
         </div>
 
         <div class="field">
@@ -111,9 +113,13 @@
           <label for="email">Email</label>
           <input type="email" id="email" name="email" required />
         </div>
+        <div class="field">
+          <label for="contact">Contact</label>
+          <input type="contact" id="contact" name="contact" required />
+        </div>
         <button type="submit">Sign Up</button>
         {% if error%}
-          <p class="auth_link">{{error}}</p>
+          <p class="auth_link"> <strong style="color: orange;">Warning:{{error}}</strong></p>
         {%endif%}
         <p class="auth_link">
           Already have an account? <a href="/user/login">Login</a>

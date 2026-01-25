@@ -1,9 +1,10 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,RedirectResponse
 import schemas
+from exception.custom_exceptions import InvalidCredential
 import utils
+from fastapi.security import OAuth2PasswordRequestForm
 from database import conn,cursor
-from exception.custom_exceptions import VehicleNotFound,VehicleAlreadyExit
 from fastapi.templating import Jinja2Templates 
 templates=Jinja2Templates(directory="templates")
 
@@ -20,29 +21,43 @@ def user_login(request:Request):
     return templates.TemplateResponse("auth.html",{"request":request,"status":False})
 
 @router.post('/login')
-def validate_login(request:Request,credential:dict):
-    print(type(credential))
-    cursor.execute("SELECT * FROM AUTH WHERE USER_ID=%s ",(credential["user_id"],))
-    print("data fetched from database")
+def validate_login(request:Request,credential:schemas.UserAuth=Depends(schemas.UserAuth.as_form)):
+    cursor.execute("SELECT * FROM AUTH WHERE USER_ID=%s ",(credential.user_id,))
     data=cursor.fetchone()
-    print("data type of coming from database: ",type(data))
-    if data==None or credential["password"]!=data['password']:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="!Invalid Credential")
-    return {"status":True,"messege":"login successfully"}
+    if data==None or credential.password != data['password']:
+        raise InvalidCredential()
+    return RedirectResponse(url="/",status_code=303)
 
 @router.get('/register')
 def user_register(request:Request):
     return templates.TemplateResponse("auth.html",{"request":request,"status":True})
 
 @router.post('/register')
-def validate_user_registration(request:Request,credentail:dict):
-    cursor.execute("INSERT INTO AUTH (USER_ID,PASSWORD,CONTACT,EMAIL) VALUES (%s,%s,%s,%s)RETURNING*;",(credentail["user_id"],credentail["password"],credentail["contact"],credentail["email"]))
-    data=cursor.fetchone()
+def validate_user_registration(
+    request: Request,
+    credential: schemas.NewUser = Depends(schemas.NewUser.as_form),
+):
+    cursor.execute(
+        """
+        INSERT INTO AUTH (USER_ID, PASSWORD, CONTACT, EMAIL)
+        VALUES (%s, %s, %s, %s)
+        RETURNING USER_ID, EMAIL;
+        """,
+        (
+            credential.user_id,
+            credential.password,
+            credential.contact,
+            credential.email,
+        ),
+    )
+
+    user = cursor.fetchone()
     conn.commit()
-    return{"status":True,"messege":"Registratiion Done","Data":data}
-    
 
-
+    return RedirectResponse(
+        url="/user/login",
+        status_code=status.HTTP_303_SEE_OTHER
+    )
      
 # @router.post('/user/register/',response_class=HTMLResponse,status_code=status.HTTP_201_CREATED)
 # def user_register(request:Request,user_Data:schemas.Register_vehicle=Depends(schemas.Register_vehicle.as_form)):
