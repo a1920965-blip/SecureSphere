@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse,RedirectResponse
 import schemas
 from exception.custom_exceptions import InvalidCredential
 import utils
+from o2auth import create_Access_token,verify_token,get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
 from database import conn,cursor
 from fastapi.templating import Jinja2Templates 
@@ -16,20 +17,18 @@ def user_home_page():
      return "This is user home page this is view after the login"
 
 @router.get('/profile')
-def user_profile(user_id:str):
-cursor.execute("""
-    SELECT 
-        p.*,
-        r.*,
-        v.*
-    FROM PROFILE p
-    LEFT JOIN resident r ON r.OWNER = p.USER_ID
-    LEFT JOIN vehicle v ON v.OWNER = p.USER_ID
-    WHERE p.USER_ID = %s
-""", (user_id,))
-
-result = cursor.fetchone()
-
+def user_profile(user_id:str=Depends(get_current_user)):
+    cursor.execute("""
+        SELECT 
+            p.*,
+            r.*,
+            v.*
+        FROM PROFILE p
+        LEFT JOIN resident r ON r.OWNER = p.USER_ID
+        LEFT JOIN vehicle v ON v.OWNER = p.USER_ID
+        WHERE p.USER_ID = %s
+    """, (user_id,))
+    result = cursor.fetchone()
     return {"status":True,"data":result}
 #preview login page
 @router.get('/login')
@@ -37,12 +36,15 @@ def user_login(request:Request):
     return templates.TemplateResponse("auth.html",{"request":request,"status":False})
 
 @router.post('/login')
-def validate_login(request:Request,credential:schemas.UserAuth=Depends(schemas.UserAuth.as_form)):
-    cursor.execute("SELECT * FROM AUTH WHERE USER_ID=%s ",(credential.user_id,))
+def validate_login(request:Request,credential:OAuth2PasswordRequestForm=Depends()):
+
+    cursor.execute("SELECT * FROM AUTH WHERE USER_ID=%s ",(credential.username,))
     data=cursor.fetchone()
     if data==None or not utils.verify(credential.password,data['password']):
         raise InvalidCredential()
-    return RedirectResponse(url="/",status_code=303)
+    token=create_Access_token({"user_id":credential.username,"password":credential.password})
+    return {"status":True,"Data":token,"token_type":"Bearer"}
+    # return RedirectResponse(url="/",status_code=303)
 
 @router.get('/register')
 def user_register(request:Request):
@@ -57,30 +59,26 @@ def validate_user_registration(
         """
         INSERT INTO AUTH (USER_ID, PASSWORD)
         VALUES (%s, %s)
-        RETURNING USER_ID,;
+        RETURNING USER_ID;
         """,
         (
             credential.user_id,
             utils.hash(credential.password),
-            credential.email,
         ),
     )
     cursor.execute(
         """
-        INSERT INTO PROFILE (NAME,CONTACT)
-        VALUES (%s, %s, %s)
-        RETURNING ;
+        INSERT INTO PROFILE (NAME,CONTACT,EMAIL,USER_ID)
+        VALUES (%s, %s, %s, %s);
         """,
         (
             credential.name,
             credential.contact,
-            credential.email
+            credential.email,
+            credential.user_id
         ),
     )
-
-    user = cursor.fetchone()
     conn.commit()
-
     return RedirectResponse(
         url="/user/login",
         status_code=status.HTTP_303_SEE_OTHER
