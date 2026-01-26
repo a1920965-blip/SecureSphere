@@ -138,13 +138,13 @@
         
         <header class="weather-card" id="weather-section">
             <div class="greeting">
-                <h1 id="user-greeting">Hello, User!</h1>
+                <h1 id="user-greeting">Hello, {{name}}!</h1>
                 <p>Here is your daily briefing.</p>
             </div>
             <div class="weather-info">
-                <div class="temp" id="weather-temp">24°C</div>
-                <div class="condition" id="weather-desc">Partly Cloudy</div>
-                <small id="city-name">New York, USA</small>
+                <div class="temp" id="weather-temp">{{temp}}</div>
+                <div class="condition" id="weather-desc">{{weather_desc}}</div>
+                <small id="city-name">{{city}}, {{country}}</small>
             </div>
         </header>
 
