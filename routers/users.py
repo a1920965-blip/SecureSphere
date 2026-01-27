@@ -16,73 +16,40 @@ router=APIRouter(prefix="/user",tags=["User"])
 def user_home_page():
      return "This is user home page this is view after the login"
 
-@router.get('/profile')
-def user_profile(user_id:str=Depends(get_current_user)):
+@router.get('/profile/')
+def user_profile(request: Request, user_id: str):
     cursor.execute("""
         SELECT 
-            p.*,
-            r.*,
-            v.*
-        FROM PROFILE p
+            p.*, r.*, v.vehicle_no, v.vehicle_type
+        FROM profile p
         LEFT JOIN resident r ON r.OWNER = p.USER_ID
         LEFT JOIN vehicle v ON v.OWNER = p.USER_ID
         WHERE p.USER_ID = %s
     """, (user_id,))
-    result = cursor.fetchone()
-    return {"status":True,"data":result}
-#preview login page
-@router.get('/login')
-def user_login(request:Request):
-    return templates.TemplateResponse("auth.html",{"request":request,"status":False})
+    
+    rows = cursor.fetchall() # Get ALL rows to capture all vehicles
+    
+    if not rows:
+        return templates.TemplateResponse("404.html", {"request": request})
 
-@router.post('/login')
-def validate_login(request:Request,credential:OAuth2PasswordRequestForm=Depends()):
+    # Initialize user data from the first row
+    user_data = dict(rows[0])
+    
+    # Format timestamp
+    if user_data.get("timestamp"):
+        user_data["timestamp"] = user_data["timestamp"].isoformat()
 
-    cursor.execute("SELECT * FROM AUTH WHERE USER_ID=%s ",(credential.username,))
-    data=cursor.fetchone()
-    if data==None or not utils.verify(credential.password,data['password']):
-        raise InvalidCredential()
-    token=create_Access_token({"user_id":credential.username,"password":credential.password})
-    return {"status":True,"Data":token,"token_type":"Bearer"}
-    # return RedirectResponse(url="/",status_code=303)
+    # Aggregate vehicles into a list
+    user_data["vehicles"] = []
+    for row in rows:
+        if row.get("vehicle_no"): # Ensure there is actually a vehicle
+            user_data["vehicles"].append({
+                "vehicle_no": row["vehicle_no"],
+                "vehicle_type": row["vehicle_type"]
+            })
 
-@router.get('/register')
-def user_register(request:Request):
-    return templates.TemplateResponse("auth.html",{"request":request,"status":True})
+    return templates.TemplateResponse("profile.html", {"request": request, "user": user_data})#preview login page
 
-@router.post('/register')
-def validate_user_registration(
-    request: Request,
-    credential: schemas.NewUser = Depends(schemas.NewUser.as_form),
-):
-    cursor.execute(
-        """
-        INSERT INTO AUTH (USER_ID, PASSWORD)
-        VALUES (%s, %s)
-        RETURNING USER_ID;
-        """,
-        (
-            credential.user_id,
-            utils.hash(credential.password),
-        ),
-    )
-    cursor.execute(
-        """
-        INSERT INTO PROFILE (NAME,CONTACT,EMAIL,USER_ID)
-        VALUES (%s, %s, %s, %s);
-        """,
-        (
-            credential.name,
-            credential.contact,
-            credential.email,
-            credential.user_id
-        ),
-    )
-    conn.commit()
-    return RedirectResponse(
-        url="/user/login",
-        status_code=status.HTTP_303_SEE_OTHER
-    )
 # @router.post('/user/register/',response_class=HTMLResponse,status_code=status.HTTP_201_CREATED)
 # def user_register(request:Request,user_Data:schemas.Register_vehicle=Depends(schemas.Register_vehicle.as_form)):
 #     details=None

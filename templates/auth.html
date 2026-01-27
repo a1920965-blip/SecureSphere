@@ -1,81 +1,17 @@
 {%extends "base.html"%}
 {% block link_css%}
-<style>
-  /* clean defaults */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* layout */
-.auth_container {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-}
-
-/* form */
-.auth_form {
-  width: 100%;
-  max-width: 360px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-
-  display: grid;
-  gap: 14px;
-}
-
-/* heading */
-.auth_form h2 {
-  font-size: 22px;
-  text-align: center;
-}
-
-/* label+input */
-.field {
-  display: grid;
-  gap: 6px;
-}
-
-.field label {
-  font-size: 14px;
-}
-
-.field input {
-  padding: 10px 12px;
-  border: 1px solid #bbb;
-  border-radius: 8px;
-  outline: none;
-}
-
-/* button */
-.auth_form button {
-  padding: 10px 12px;
-  border: 1px solid #999;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* signup link */
-.auth_link {
-  text-align: center;
-  font-size: 14px;
-}
-</style>
+<link rel="stylesheet"href="static\styles\auth.css">
 {% endblock%}
 {%block main%}
   {%if status==False%}
     <div class="auth_container">
-      <form class="auth_form" method="POST" action="/user/login/">
+      <form class="auth_form" method="POST" action="/login/">
 
         <h2>Login</h2>
 
         <div class="field">
-          <label for="user_id">Username</label>
-          <input type="text" id="user_id" name="user_id" required />
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
         </div>
 
         <div class="field">
@@ -88,19 +24,22 @@
           <p class="auth_link"> <strong style="color: orange;">Warning:{{error}}</strong></p>
         {%endif%}
         <p class="auth_link">
-          Don’t have an account? <a href="/user/register/">Signup</a>
+          Don’t have an account? <a href="/register/">Signup</a>
         </p>
       </form>
     </div>
   {%else %}
     <div class="auth_container">
-      <form class="auth_form" method="POST" action="/user/register/">
+      <form class="auth_form" method="POST" action="/register/">
         <h2>Create An Account</h2>
         <div class="field">
           <label for="user_id">Username</label>
           <input type="text" id="user_id" name="user_id" required />
         </div>
-
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required />
+        </div>
         <div class="field">
           <label for="pass">Password</label>
           <input type="password" id="password" name="pass" required />
@@ -122,7 +61,7 @@
           <p class="auth_link"> <strong style="color: orange;">Warning:{{error}}</strong></p>
         {%endif%}
         <p class="auth_link">
-          Already have an account? <a href="/user/login">Login</a>
+          Already have an account? <a href="/login">Login</a>
         </p>
       </form>
     </div>

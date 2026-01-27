@@ -1,0 +1,83 @@
+  {% extends "base.html" %}
+  {% block link_css%}
+ <link rel="stylesheet"href="static\styles\complaint.css">
+  {%endblock%}
+{% block main%}
+<div class="container">
+  <div class="card">
+    <h1>File a Complaint</h1>
+    <p class="subtitle">Campus Residential & Security Complaint Form</p>
+
+    <form>
+      <div class="form-grid">
+
+        <!-- Identity -->
+        <div class="form-group">
+          <label>Employee / Resident ID</label>
+          <input type="text" placeholder="EMP12345" required />
+        </div>
+
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" placeholder="Full Name" required />
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select>
+            <option>Employee</option>
+            <option>Professor</option>
+            <option>Resident</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input type="tel" placeholder="98XXXXXXXX" />
+        </div>
+
+        <!-- Complaint Details -->
+        <div class="form-group">
+          <label>Complaint Category</label>
+          <select required>
+            <option value="">Select category</option>
+            <option>Security Issue</option>
+            <option>Vehicle / Parking</option>
+            <option>Electricity</option>
+            <option>Water Supply</option>
+            <option>Noise / Disturbance</option>
+            <option>Maintenance</option>
+            <option>Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Location / Quarter No</label>
+          <input type="text" placeholder="Q-12, Block B" />
+        </div>
+
+        <div class="form-group">
+          <label>Related Vehicle (if any)</label>
+          <input type="text" placeholder="DL01AB1234" />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Complaint Description</label>
+          <textarea placeholder="Describe the issue in detail..." required></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Attach Image (optional)</label>
+          <input type="file" />
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button type="reset" class="btn-secondary">Clear</button>
+        <button type="submit" class="btn-primary">Submit Complaint</button>
+      </div>
+    </form>
+  </div>
+</div>
+{%endblock%}
