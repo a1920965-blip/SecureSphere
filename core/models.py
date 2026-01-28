@@ -33,7 +33,7 @@ class Vehicle(Base):
     __tablename__="vehicle"
     owner=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False,primary_key=True)
     number=Column(String,nullable=False,primary_key=True)
-    
+
 class Complaint(Base):
     __tablename__="complaint"
     user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
@@ -42,7 +42,5 @@ class Complaint(Base):
     category=Column(String,nullable=False)
     attachement=Column(String)
     subject=Column(String)
-
-
 
 

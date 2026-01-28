@@ -9,18 +9,20 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-SQLALCHEMY_URL="postgresql+psycopg2://postgres:akash123@db:5432/postgres"
+SQLALCHEMY_URL=f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
 engine=create_engine(SQLALCHEMY_URL,echo=True)
 SessionLocal=sessionmaker(autoflush=False,autocommit=False,bind=engine)
-# with engine.connect() as conn:
-#     result = conn.execute(text("select 'hello world'"))
-#     print(result.all())
+
 def get_db():
     db=SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+# with engine.connect() as conn:
+#     result = conn.execute(text("select 'hello world'"))
+#     print(result.all())
 # while True:
 #     try:
 #         conn=psycopg2.connect(dbname=os.getenv('POSTGRES_DB'), user=os.getenv('POSTGRES_USER') ,host=os.getenv('POSTGRES_HOST'),port=os.getenv('POSTGRES_PORT'),password=os.getenv("POSTGRES_PASSWORD"),cursor_factory=RealDictCursor)
