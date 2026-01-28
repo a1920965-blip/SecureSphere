@@ -1,5 +1,5 @@
 from fastapi import Request,status
-from.custom_exceptions import VehicleNotFound,InvalidCredential,AdminAlreadyExit
+from .custom_exceptions import VehicleNotFound,InvalidCredential,AdminAlreadyExit
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 #So this decorator registers a handler like: If any endpoint raises VehicleNotFound, run this function automatically.

@@ -1,16 +1,16 @@
 from typing import List
 from fastapi import FastAPI,Request
-from routers import users,auth
-import api_services
-from exception.handle import register_user_exception_handler
+from core.routers import users,auth
+from core import api_services,models
+from core.exception.handle import register_user_exception_handler
 from fastapi.templating import Jinja2Templates
-templates=Jinja2Templates(directory="templates")
+templates=Jinja2Templates(directory="core/templates")
 from fastapi.staticfiles import StaticFiles
 app=FastAPI()
-
+# models.Base.metadata.create_all(bind=engine)
 register_user_exception_handler(app)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="core/static"), name="static")
 
 @app.get('/')
 def root(request:Request):
@@ -22,6 +22,6 @@ def root(request:Request):
     return templates.TemplateResponse("app.html",context)
 @app.get('/test')
 def test(request:Request):
-    return templates.TemplateResponse("profile.html",{"request":request})
+    return templates.TemplateResponse("app.html",{"request":request})
 app.include_router(users.router)
 app.include_router(auth.router)

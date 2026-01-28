@@ -2,8 +2,8 @@
 {%block link_css%}
     <link rel="stylesheet" href="static/styles\app.css">
 
-
-{% block header%}
+{%endblock%}
+{% block main%}
     <nav class="sidebar">
         <div class="logo">MyService App</div>
         <div class="nav-links">
@@ -15,8 +15,6 @@
             <a href="/login/" class="logout">Logout</a>
         </div>
     </nav>
-{%endblock%}
-{% block main%}
     <main class="main-content">
         
         <header class="weather-card" id="weather-section">

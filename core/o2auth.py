@@ -1,7 +1,7 @@
 from fastapi import Depends,HTTPException,status,Depends
 from fastapi.security import OAuth2PasswordBearer
-import schemas
-from exception.custom_exceptions import InvalidCredential
+from core import schemas
+from core.exception.custom_exceptions import InvalidCredential
 from datetime import datetime,timedelta
 from dotenv import load_dotenv
 from jose import JWTError,jwt
