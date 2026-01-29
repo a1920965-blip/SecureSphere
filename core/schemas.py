@@ -52,7 +52,7 @@ class Resident(BaseModel):
     block:str=None
     city:str=None
     pincode:str=None
-    state:str=None
+    state:str=None 
 
 class Vehicle(BaseModel):
     number:str
@@ -62,7 +62,17 @@ class Complaint(BaseModel):
     description:str
     subject:str
     attachement:str
+class Epass(BaseModel):
+    user_id:str
+    vehicle_no:Optional[str]
+    contact:str
+    name:str
+    purpose:Optional[str]
+    arrival:Optional[str]="Not Specified"
+    departure:Optional[str]="Not Specified"
     
+class Token(BaseModel):
+    token:str
 
 
 
