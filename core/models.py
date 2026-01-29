@@ -28,6 +28,7 @@ class Personal(Base):
     department=Column(String)
     contact=Column(String,nullable=False)
     designation=Column(String)
+    token=Column(String,nullable=False)
     timestamp=Column(TIMESTAMP,server_default=text("now()"),nullable=False)
 class Vehicle(Base):
     __tablename__="vehicle"
@@ -42,5 +43,23 @@ class Complaint(Base):
     category=Column(String,nullable=False)
     attachement=Column(String)
     subject=Column(String)
+    action=Column(String)
+class Epass(Base):
+    __tablename__="epass"
+    user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
+    request_id=Column(Integer,nullable=False,unique=True,primary_key=True)
+    guest_name=Column(String,nullable=False)
+    purpose=Column(String)
+    arrival=Column(String)
+    departure=Column(String)
+    contact=Column(String)
+    vehicle_no=Column(String)
+    status=Column(String,default="Pending")
+    remark=Column(String,default="None")
+
+class Token(Base):
+    __tablename__="token"
+    user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
+    token=Column(String,primary_key=True,nullable=False)
 
 
