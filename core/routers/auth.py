@@ -30,7 +30,8 @@ def validate_user_registration(user_data:schemas.NewUser,db:Session=Depends(data
     Qr=utils.generate_qr_code(user_data.user_id)
     token_obj=models.Token(user_id=user_data.user_id,token=Qr["data"],token_id=Qr["token_id"])
     db.add(token_obj)
-
+    log=models.User_logs(user_id=user_data.user_id,action="Register",name=user_data.name)
+    db.add(log)
     personal=models.Personal(user_id=user_data.user_id,contact=user_data.contact,email=user_data.email,Name=user_data.name)
     db.add(personal)
     db.commit()
