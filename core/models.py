@@ -1,4 +1,4 @@
-from sqlalchemy import Column,Integer,String,TIMESTAMP,text,ForeignKey
+from sqlalchemy import Column,Integer,String,TIMESTAMP,text,ForeignKey,Identity
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 Base=declarative_base()
@@ -36,17 +36,19 @@ class Vehicle(Base):
 
 class Complaint(Base):
     __tablename__="complaint"
+    ticket_id=Column(Integer,Identity(start=201,increment=1),primary_key=True,index=True,nullable=False)
     user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
-    complaint_id=Column(Integer,primary_key=True,index=True)
     description=Column(String,nullable=False)
     category=Column(String,nullable=False)
     attachment=Column(String)
     subject=Column(String)
-    action=Column(String)
+    status=Column(String,default="Pending")
+    remark=Column(String,default="None")
+
 class Epass(Base):
     __tablename__="epass"
+    ticket_id=Column(Integer,Identity(start=101, increment=1),primary_key=True,index=True,nullable=False)
     user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
-    request_id=Column(Integer,nullable=False,unique=True,primary_key=True)
     guest_name=Column(String,nullable=False)
     purpose=Column(String)
     arrival=Column(String)
@@ -62,4 +64,10 @@ class Token(Base):
     user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
     token_id=Column(String,primary_key=True,nullable=False)
 
+class User_logs(Base):
+    __tablename__="user_logs"
+    user_id=Column(String,nullable=False)
+    name=Column(String,nullable=False)
+    logs_id=Column(Integer,primary_key=True,nullable=False)
+    action=Column(String,nullable=False)
 
