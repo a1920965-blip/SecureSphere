@@ -27,7 +27,7 @@ def validate_user_registration(user_data:schemas.NewUser,db:Session=Depends(data
     auth=models.Auth(user_id=user_data.user_id,password=utils.hash(user_data.password))
     db.add(auth)
 
-    Qr=utils.generate_qr_code(token_url)
+    Qr=utils.generate_qr_code(user_data.user_id)
     token_obj=models.Token(user_id=user_data.user_id,token=Qr["data"],token_id=Qr["token_id"])
     db.add(token_obj)
 
