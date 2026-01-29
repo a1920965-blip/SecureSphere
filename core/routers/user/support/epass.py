@@ -14,7 +14,7 @@ def Epass_post(user_data:schemas.Epass,user_id=Depends(get_current_user),db:Sess
     db.commit()
     return {"status":True,"message":"Request Submited"}
 @router.get('/epass')
-def Epass_get(ticket_id:str,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
+def Epass_get(ticket_id:int,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
     e = db.query(models.Epass).filter(models.Epass.ticket_id == ticket_id).first()
     return {
         "status": True,

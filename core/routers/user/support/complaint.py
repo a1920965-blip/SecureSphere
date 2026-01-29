@@ -23,7 +23,7 @@ def complaint_post(user_data: schemas.Complaint, db: Session = Depends(database.
         "ticket_id": obj.ticket_id
     }
 @router.get('/complaint')
-def complaint_status(ticket_id:str,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
+def complaint_status(ticket_id:int,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
     c = db.get(models.Complaint,ticket_id)
     return {
         "status": True, 

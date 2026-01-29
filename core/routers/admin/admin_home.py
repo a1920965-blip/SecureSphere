@@ -17,7 +17,7 @@ def dashboard(db:Session=Depends(database.get_db),admin=Depends(get_current_user
     return {"Compliants":[{"ticket_id":c.ticket_id,
                             "user_id":c.user_id,
                             "category":c.category,
-                            "description":c.category,
+                            "description":c.description,
                             "attachment":c.attachment,
                             "subject":c.subject} for c in complaint] if complaint else None,
             "epasses":[{"ticket_id": e.ticket_id,

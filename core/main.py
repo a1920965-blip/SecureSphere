@@ -1,12 +1,17 @@
 from fastapi import FastAPI,Request
 from core.exception.handle import user_exception_handler,jwt_exception_handler,postgres_exception_handler
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from core.routers import auth,qr_verify
 from core.routers.admin import admin
 from core.routers.user import user
 
 
 app=FastAPI()
+
+templates = Jinja2Templates(directory="core/templates")
+app.mount("/static", StaticFiles(directory="core/static"), name="static")
 
 origin=["*"]
 app.add_middleware(

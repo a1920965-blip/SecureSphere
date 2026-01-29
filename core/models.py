@@ -68,6 +68,6 @@ class User_logs(Base):
     __tablename__="user_logs"
     user_id=Column(String,nullable=False)
     name=Column(String,nullable=False)
-    logs_id=Column(Integer,primary_key=True,nullable=False)
+    logs_id=Column(Integer,Identity(start=1021, increment=1),primary_key=True,nullable=False)
     action=Column(String,nullable=False)
 

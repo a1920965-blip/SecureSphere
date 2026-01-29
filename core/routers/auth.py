@@ -24,6 +24,9 @@ def user_register(request:Request):
     pass
 @router.post('/register')
 def validate_user_registration(user_data:schemas.NewUser,db:Session=Depends(database.get_db)):
+    existing=db.get(models.Auth,user_data.user_id)
+    if existing:
+        raise Credential_Exception("User Already Exit")
     auth=models.Auth(user_id=user_data.user_id,password=utils.hash(user_data.password))
     db.add(auth)
 

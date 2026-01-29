@@ -2,8 +2,16 @@ from fastapi import APIRouter,status,HTTPException,Request,Depends
 from core import schemas,utils,database,models
 from sqlalchemy.orm import Session
 from core.o2auth import create_Access_token,verify_token,get_current_user
-router=APIRouter()
+# core/routers/user/user_dashboard.py
 
+from core import api_services  # ← Add import
+
+
+router=APIRouter()
+@router.get('/weather')
+def get_weather(city: str = "Mumbai", user_id=Depends(get_current_user)):
+    """Get weather data for dashboard"""
+    return api_services.weather_api(city)
 #home page of user 
 @router.get('/')
 def user_home_page():

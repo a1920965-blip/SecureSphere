@@ -12,7 +12,7 @@ def user_profile(user_id:str,db:Session=Depends(database.get_db),admin=Depends(g
     user=db.get(models.Auth,user_id)
     personal= user.personal[0] if user.personal else None
     resident= user.resident[0] if user.resident else None
-    vehicle= user.vehicle[0] if user.vehicle else None
+    vehicle= user.vehicle
     return {"status":True,
                 "data":{"user_id":user.user_id,
                         "Name":personal.Name,

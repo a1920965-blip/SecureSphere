@@ -10,5 +10,5 @@ router=APIRouter(tags=["QrCode/Token Valdation"])
 def token_verify(token:str,db:Session=Depends(database.get_db)):
     user=db.get(models.Token,token)
     if user==None:
-        return Credential_Exception("Invalid Token")
+        raise Credential_Exception("Invalid Token")
     return {"status":True,"message":"Verifyed user"}
