@@ -19,7 +19,7 @@ def submit_complaint(user_data: schemas.Complaint, db: Session = Depends(databas
     
     return {
         "status": True, 
-        "messege": "Complaint submitted successfully!",
+        "message": "Complaint submitted successfully!",
         "complaint_id": obj.complaint_id
     }
 @router.get('/user/complaint')

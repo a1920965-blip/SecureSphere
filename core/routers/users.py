@@ -54,7 +54,7 @@ def update_personal(user_data:schemas.Personal,user_id=Depends(get_current_user)
     user.designation=user_data.designation
     user.department=user_data.department
     db.commit()
-    return {'status':True,"messege":"Details Updates succcesfully"}
+    return {'status':True,"message":"Details Updates succesfully"}
 
 @router.post('/resident/')
 def update_resident(user_data:schemas.Resident,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
@@ -70,21 +70,21 @@ def update_resident(user_data:schemas.Resident,user_id=Depends(get_current_user)
         user.state=user_data.state
         user.pincode=user_data.pincode
     db.commit()
-    return {'status':True,"messege":"Details Updates succcesfully"}
+    return {'status':True,"message":"Details Updates succesfully"}
 
 @router.post('/vehicle/add/')
 def add_vehicle(user_data:schemas.Vehicle,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     obj=models.Vehicle(owner=user_id,number=user_data.number)
     db.add(obj)
     db.commit()
-    return {'status':True,"messege":"vehicle added succcesfully"}
+    return {'status':True,"message":"vehicle added succesfully"}
 @router.post('/vehicle/remove/')
 def delete_vehicle(user_data:schemas.Vehicle,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     obj=db.get(models.Vehicle,(user_id,user_data.number))
     if obj==None:
-        return {'status':False,"messege":f"vehicle does not exit of number: {user_data.number}"}
+        return {'status':False,"message":f"vehicle does not exit of number: {user_data.number}"}
     db.delete(obj)
     db.commit()
-    return {'status':True,"messege":"vehicle delete  succcesfully"}
+    return {'status':True,"message":"vehicle delete  succesfully"}
 
 

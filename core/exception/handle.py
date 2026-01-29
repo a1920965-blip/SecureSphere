@@ -7,7 +7,7 @@ def user_exception_handler(app):
 
     @app.exception_handler(Credential_Exception)
     def credential_handler(exec:Credential_Exception):
-        return {"status":False,"messege":Credential_Exception.msg}
+        return {"status":False,"message":Credential_Exception.msg}
 
 
 def jwt_exception_handler(app):

@@ -15,7 +15,7 @@ def user_login(request:Request):
 def validate_login(credential:schemas.UserAuth,db:Session=Depends(database.get_db)):
     user=db.get(models.Auth,credential.user_id)
     if user==None or not utils.verify(credential.password,user.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="INvalid Credential!")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Credential!")
     token=create_Access_token({"user_id":credential.user_id})
     return {"status":True,"token":token, "user_id": credential.user_id}
 
@@ -34,6 +34,6 @@ def validate_user_registration(user_data:schemas.NewUser,db:Session=Depends(data
     personal=models.Personal(user_id=user_data.user_id,contact=user_data.contact,email=user_data.email,Name=user_data.name)
     db.add(personal)
     db.commit()
-    return {"status":True,"messege":"User Register Successfully!"}
+    return {"status":True,"message":"User Register Successfully!"}
 
 
