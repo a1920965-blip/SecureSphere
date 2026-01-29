@@ -2,6 +2,8 @@ services:
   app:
     build: .
     container_name: app-dev
+    env_file:
+      - .env
     volumes:
       - .:/usr/src/app
     command: sleep infinity

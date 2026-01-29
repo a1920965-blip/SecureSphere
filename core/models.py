@@ -28,7 +28,6 @@ class Personal(Base):
     department=Column(String)
     contact=Column(String,nullable=False)
     designation=Column(String)
-    token=Column(String,nullable=False)
     timestamp=Column(TIMESTAMP,server_default=text("now()"),nullable=False)
 class Vehicle(Base):
     __tablename__="vehicle"
@@ -59,7 +58,8 @@ class Epass(Base):
 
 class Token(Base):
     __tablename__="token"
+    token=Column(String,nullable=False)
     user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
-    token=Column(String,primary_key=True,nullable=False)
+    token_id=Column(String,primary_key=True,nullable=False)
 
 

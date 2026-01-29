@@ -1,7 +1,6 @@
 from fastapi import Depends,HTTPException,status,Depends
 from fastapi.security import OAuth2PasswordBearer
 from core import schemas
-from core.exception.custom_exceptions import InvalidCredential
 from datetime import datetime,timedelta
 from jose import JWTError,jwt,ExpiredSignatureError
 import os
@@ -12,7 +11,7 @@ def create_Access_token(user_credentail:schemas.UserAuth):
     to_encode.update({"exp":expire})
     access_token=jwt.encode(to_encode,os.getenv("SECRET_KEY"),algorithm=os.getenv("ALGORITHM"))
     return access_token
-def verify_token(token: str,credentail_exception):
+def verify_token(token: str):
     try:
         payload = jwt.decode(
             token,
@@ -26,9 +25,11 @@ def verify_token(token: str,credentail_exception):
             detail="Token has expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
     except JWTError:
-        raise credentail_exception()
+            raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 def get_current_user(token:str=Depends(Oauth2)):
-    credentail_exception=InvalidCredential
-    return verify_token(token,credentail_exception)
+    return verify_token(token)
