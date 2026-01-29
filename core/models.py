@@ -40,7 +40,7 @@ class Complaint(Base):
     complaint_id=Column(Integer,primary_key=True,index=True)
     description=Column(String,nullable=False)
     category=Column(String,nullable=False)
-    attachement=Column(String)
+    attachment=Column(String)
     subject=Column(String)
     action=Column(String)
 class Epass(Base):

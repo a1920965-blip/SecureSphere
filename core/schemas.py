@@ -49,7 +49,7 @@ class Complaint(BaseModel):
     category:str
     description:str
     subject:str
-    attachement:str
+    attachment:str
 class Epass(BaseModel):
     user_id:str
     vehicle_no:Optional[str]
