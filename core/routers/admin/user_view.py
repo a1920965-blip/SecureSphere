@@ -25,7 +25,7 @@ def user_profile(user_id:str,db:Session=Depends(database.get_db),admin=Depends(g
                         "city": resident.city if resident else None,                                
                         "state": resident.state if resident else None,                                
                         "pincode": resident.pincode if resident else None,
-                        "vehicles":{[{"Number":v.n} for v in vehicle] if vehicle else None}
+                        "vehicles":[{"Number":v.n} for v in vehicle] if vehicle else None
                 }
                 }   
                                
