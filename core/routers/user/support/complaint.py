@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from core.o2auth import create_Access_token,verify_token,get_current_user
 router=APIRouter(tags=["Complaint"])
 
-@router.post('/user/complaint')
-def submit_complaint(user_data: schemas.Complaint, db: Session = Depends(database.get_db), user=Depends(get_current_user)):
+@router.post('/complaint')
+def complaint_post(user_data: schemas.Complaint, db: Session = Depends(database.get_db), user=Depends(get_current_user)):
     obj = models.Complaint(
         user_id=user,
         category=user_data.category,
@@ -20,19 +20,19 @@ def submit_complaint(user_data: schemas.Complaint, db: Session = Depends(databas
     return {
         "status": True, 
         "message": "Complaint submitted successfully!",
-        "complaint_id": obj.complaint_id
+        "ticket_id": obj.ticket_id
     }
-@router.get('/user/complaint')
-def complaint_status(user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
-    complaints = db.query(models.Complaint).filter(models.Complaint.user_id == user_id).all()
+@router.get('/complaint')
+def complaint_status(ticket_id:str,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
+    c = db.get(models.Complaint,ticket_id)
     return {
         "status": True, 
-        "data": [{
-            "complaint_id": c.complaint_id,
+        "data": {
+            "ticket_id": c.ticket_id,
             "category": c.category,
             "subject": c.subject,
             "description": c.description,
-            "status": c.action or "Pending",
+            "status": c.status or "Pending",
             "attachment": c.attachment
-        } for c in complaints]
+        }
     }

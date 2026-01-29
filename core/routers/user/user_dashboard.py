@@ -2,7 +2,7 @@ from fastapi import APIRouter,status,HTTPException,Request,Depends
 from core import schemas,utils,database,models
 from sqlalchemy.orm import Session
 from core.o2auth import create_Access_token,verify_token,get_current_user
-router=APIRouter(prefix="/user",tags=["User"])
+router=APIRouter()
 
 #home page of user 
 @router.get('/')
@@ -19,8 +19,6 @@ def user_profile(db: Session = Depends(database.get_db), user_id=Depends(get_cur
     personal = auth_user.personal[0] if auth_user.personal else None
     resident = auth_user.resident[0] if auth_user.resident else None
     vehicles = auth_user.vehicle
-    complaints = auth_user.complaint
-    
     return {
         "status": True,
         "data": {
@@ -36,13 +34,7 @@ def user_profile(db: Session = Depends(database.get_db), user_id=Depends(get_cur
             "city": resident.city if resident else None,
             "state": resident.state if resident else None,
             "pincode": resident.pincode if resident else None,
-            "vehicles": [{"number": v.number} for v in vehicles],
-            "complaints": [{
-                "complaint_id": c.complaint_id, 
-                "category": c.category,
-                "subject": c.subject,
-                "status": c.action or "Pending"
-            } for c in complaints]
+            "vehicles": [{"number": v.number} for v in vehicles]
         }
     }
 
