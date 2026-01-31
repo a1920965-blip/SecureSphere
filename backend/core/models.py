@@ -71,3 +71,9 @@ class User_logs(Base):
     logs_id=Column(Integer,Identity(start=1021, increment=1),primary_key=True,nullable=False)
     action=Column(String,nullable=False)
     
+class Notices(Base):
+    __tablename__="notices"
+    notice_id=Column(Integer,Identity(start=1001,increment=1),primary_key=True,nullable=False)
+    Type=Column(String,nullable=False)
+    body=Column(String,nullable=False)
+    user=Column(String,nullable=False)

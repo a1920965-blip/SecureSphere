@@ -57,10 +57,9 @@ class Complaint_post(BaseModel):
     subject:str
     attachment:str
 class Epass_post(BaseModel):
-    user_id:str
     vehicle_no:Optional[str]
     contact:str
-    name:str
+    guest_name:str
     purpose:Optional[str]
     arrival:Optional[str]="Not Specified"
     departure:Optional[str]="Not Specified"
@@ -88,7 +87,10 @@ class Epass_update(BaseModel):
     remark:Optional[str]=None
 
 
-
+class Post_notice(BaseModel):
+    Type:str
+    body:str
+    user:str
 
 #---------------------------------------Response Model--------------------------------------------#
 class User_registration_response(BaseModel):

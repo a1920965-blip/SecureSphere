@@ -1,6 +1,7 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from backend.core.o2auth import get_current_user
 # backend.core/routers/user/user_dashboard.py
 
@@ -13,9 +14,11 @@ def get_weather(city: str = "Mumbai", user_id=Depends(get_current_user)):
     """Get weather data for dashboard"""
     return api_services.weather_api(city)
 #home page of user 
-@router.get('/')
-def user_home_page():
-     return "This is user home page this is view after the login"
+@router.get('/notice')
+def user_notice(user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
+    notices = db.query(models.Notices).filter(or_(models.Notices.user == user_id, models.Notices.user == "*")).all()    
+    data=[{"Type":n.Type,"Body":n.body} for n in notices] if notices else None
+    return {"status":True,"data":data}
 
 @router.get('/profile/')
 def user_profile(db: Session = Depends(database.get_db), user_id=Depends(get_current_user)):
