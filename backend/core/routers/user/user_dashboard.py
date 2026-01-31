@@ -1,10 +1,10 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
 from sqlalchemy.orm import Session
-from backend.core.o2auth import create_Access_token,verify_token,get_current_user
+from backend.core.o2auth import get_current_user
 # backend.core/routers/user/user_dashboard.py
 
-from backend.core import api_services  # ← Add import
+from backend.core import api_services 
 
 
 router=APIRouter()
@@ -26,10 +26,12 @@ def user_profile(db: Session = Depends(database.get_db), user_id=Depends(get_cur
     # Load relationships
     personal = auth_user.personal[0] if auth_user.personal else None
     resident = auth_user.resident[0] if auth_user.resident else None
+    user_qrcode=db.query(models.Token).filter(models.Token.user_id==auth_user.user_id).first()
     vehicles = auth_user.vehicle
     return {
         "status": True,
         "data": {
+            "qr_data":user_qrcode.token,
             "user_id": auth_user.user_id,
             "name": personal.Name if personal else None,
             "email": personal.email if personal else None,
@@ -46,7 +48,7 @@ def user_profile(db: Session = Depends(database.get_db), user_id=Depends(get_cur
         }
     }
 
-@router.post('/personal/')
+@router.put('/personal/')
 def update_personal(user_data:schemas.Personal,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     user=db.get(models.Personal,user_id)
     user.contact=user_data.contact
@@ -56,7 +58,7 @@ def update_personal(user_data:schemas.Personal,user_id=Depends(get_current_user)
     db.commit()
     return {'status':True,"message":"Details Updates succesfully"}
 
-@router.post('/resident/')
+@router.put('/resident/')
 def update_resident(user_data:schemas.Resident,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     
     user=db.get(models.Resident,user_id)
@@ -73,13 +75,13 @@ def update_resident(user_data:schemas.Resident,user_id=Depends(get_current_user)
     return {'status':True,"message":"Details Updates succesfully"}
 
 @router.post('/vehicle/add/')
-def add_vehicle(user_data:schemas.Vehicle,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
+def add_vehicle(user_data:schemas.Add_vehicle,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     obj=models.Vehicle(owner=user_id,number=user_data.number)
     db.add(obj)
     db.commit()
     return {'status':True,"message":"vehicle added succesfully"}
-@router.post('/vehicle/remove/')
-def delete_vehicle(user_data:schemas.Vehicle,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
+@router.delete('/vehicle/remove/')
+def delete_vehicle(user_data:schemas.Delete_vehicle,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     obj=db.get(models.Vehicle,(user_id,user_data.number))
     if obj==None:
         return {'status':False,"message":f"vehicle does not exit of number: {user_data.number}"}
