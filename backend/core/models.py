@@ -7,6 +7,7 @@ class Auth(Base):
     __tablename__="auth"
     user_id=Column(String,nullable=False,unique=True,primary_key=True)
     password=Column(String,nullable=False)
+    role=Column(String,nullable=False,server_default="USER")
     resident=relationship("Resident",cascade="all,delete")
     vehicle=relationship("Vehicle",cascade="all,delete")
     personal=relationship("Personal",cascade="all,delete")

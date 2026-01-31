@@ -9,6 +9,7 @@ from typing import Optional,List
 class Validate_login(BaseModel):
     user_id:str
     password:str
+    admin_code:Optional[str]
     def as_form(cls,user_id:str=Form(...),
                     password:str=Form(...)):
         return cls(user_id=user_id,password=password)
@@ -67,6 +68,10 @@ class Epass_post(BaseModel):
 
 
 #------------------------------------------------ADMIN SCHEMAS-------------------------------------------------------#
+class Validate_admin_registration(BaseModel):
+    user_id:str
+    password:str
+    code:str
 class Complaint_update(BaseModel):
     user_id:str
     category:str   

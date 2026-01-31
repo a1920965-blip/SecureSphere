@@ -2,16 +2,11 @@ from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
 from backend.core import database,models
 from .import epass,complaint
-from backend.core.o2auth import get_current_user
+from backend.core.o2auth import verify_user
 
 router=APIRouter(prefix="/support")
-
-@router.get('/')
-def support():
-    return "support page"
-
 @router.get('/status/')
-def tickets_status(user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
+def tickets_status(user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     complaint=db.query(models.Complaint).filter(models.Complaint.user_id==user_id).all()
     epasses=db.query(models.Epass).filter(models.Epass.user_id==user_id).all()
     return {"status":True,

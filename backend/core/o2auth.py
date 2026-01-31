@@ -19,7 +19,7 @@ def verify_token(token: str):
             os.getenv("SECRET_KEY"),
             algorithms=[os.getenv("ALGORITHM")]
         )
-        return payload.get('user_id')
+        return {"user_id":payload.get('user_id'),"role":payload.get('role')}
     except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -34,3 +34,17 @@ def verify_token(token: str):
         )
 def get_current_user(token:str=Depends(Oauth2)):
     return verify_token(token)
+def verfiy_admin(current_user:dict=Depends(get_current_user)):
+    if current_user["role"]!="ADMIN":
+          raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to perform admin action"
+        )
+    return current_user
+def verify_user(current_user:dict=Depends(get_current_user)):
+    if current_user["role"]!="USER":
+          raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to perform User action"
+        )
+    return current_user["user_id"]

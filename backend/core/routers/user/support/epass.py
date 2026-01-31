@@ -1,20 +1,21 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
 from sqlalchemy.orm import Session
-from backend.core.o2auth import create_Access_token,verify_token,get_current_user
+from backend.core.o2auth import verify_user
 router=APIRouter(tags=["E-Pass"])
 
 @router.post('/epass')
-def Epass_post(user_data:schemas.Epass_post,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
+def Epass_post(user_data:schemas.Epass_post,user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     obj=models.Epass(user_id=user_id,vehicle_no=user_data.vehicle_no,
-                    contact=user_data.contact,guest_name=user_data.name,
+                    contact=user_data.contact,guest_name=user_data.guest_name,
                     purpose=user_data.purpose,arrival=user_data.arrival,
                     departure=user_data.departure)
     db.add(obj)
     db.commit()
-    return {"status":True,"message":"Request Submited"}
+    db.refresh(obj)
+    return {"status":True,"message":"Request Submited","ticket_id":obj.ticket_id}
 @router.get('/epass')
-def Epass_get(ticket_id:int,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
+def Epass_get(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(database.get_db)):
     e = db.query(models.Epass).filter(models.Epass.ticket_id == ticket_id).first()
     print(user_id)
     if e==None:

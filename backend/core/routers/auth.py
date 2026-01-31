@@ -13,25 +13,33 @@ def validate_login(credential:OAuth2PasswordRequestForm=Depends(),db:Session=Dep
     user=db.get(models.Auth,credential.username)
     if user==None or not utils.verify(credential.password,user.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Credential user not found!")
-    token=create_Access_token({"user_id":credential.username})
+    token=create_Access_token({"user_id":credential.username,"role":user.role})
     return {"access_token": token,"token_type": "bearer"}
-
-@router.post('/register',response_model=schemas.User_registration_response,status_code=status.HTTP_201_CREATED)
-def validate_user_registration(user_data:schemas.Validate_user_registration,db:Session=Depends(database.get_db)):
-    existing=db.get(models.Auth,user_data.user_id)
+@router.post('/user/register',response_model=schemas.User_registration_response,status_code=status.HTTP_201_CREATED)
+def validate_user_registration(f_data:schemas.Validate_user_registration,db:Session=Depends(database.get_db)):
+    existing=db.get(models.Auth,f_data.user_id)
     if existing:
         raise Credential_Exception("User Already Exit")
-    auth=models.Auth(user_id=user_data.user_id,password=utils.hash(user_data.password))
+    auth=models.Auth(user_id=f_data.user_id,password=utils.hash(f_data.password),role="USER")
     db.add(auth)
-
-    Qr=utils.generate_qr_code(user_data.user_id)
-    token_obj=models.Token(user_id=user_data.user_id,token=Qr["data"],token_id=Qr["token_id"])
+    Qr=utils.generate_qr_code(f_data.user_id)
+    token_obj=models.Token(user_id=f_data.user_id,token=Qr["data"],token_id=Qr["token_id"])
     db.add(token_obj)
-    log=models.User_logs(user_id=user_data.user_id,action="Register",name=user_data.name)
+    log=models.User_logs(user_id=f_data.user_id,action="Register",name=f_data.name)
     db.add(log)
-    personal=models.Personal(user_id=user_data.user_id,contact=user_data.contact,email=user_data.email,Name=user_data.name)
+    personal=models.Personal(user_id=f_data.user_id,contact=f_data.contact,email=f_data.email,Name=f_data.name)
     db.add(personal)
     db.commit()
-    return {"status":True,"message":"User Register Successfully!"}
-
-
+    return {"status":True,"message":f"{f_data.role} Register Successfully!"}
+@router.post('/admin/register')
+def validate_admin_registration(f_data:schemas.Validate_admin_registration,db:Session=Depends(database.get_db)):
+    existing=db.get(models.Auth,f_data.user_id)
+    if existing:
+        raise Credential_Exception("Admin Already Exit")
+    if f_data.code!="ADMINCODE":
+        raise Credential_Exception("Wrong Security code!")
+    else:
+        auth=models.Auth(user_id=f_data.user_id,password=utils.hash(f_data.password),role="ADMIN")
+        db.add(auth)
+        db.commit()
+    return {"status":True,"message":"Admin Register Successfully!"}

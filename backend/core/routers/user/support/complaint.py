@@ -1,11 +1,11 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
 from sqlalchemy.orm import Session
-from backend.core.o2auth import create_Access_token,verify_token,get_current_user
+from backend.core.o2auth import verify_token,verify_user
 router=APIRouter(tags=["Complaint"])
 
 @router.post('/complaint')
-def complaint_post(user_data: schemas.Complaint_post, db: Session = Depends(database.get_db), user=Depends(get_current_user)):
+def complaint_post(user_data: schemas.Complaint_post, db: Session = Depends(database.get_db), user=Depends(verify_user)):
     obj = models.Complaint(
         user_id=user,
         category=user_data.category,
@@ -23,7 +23,7 @@ def complaint_post(user_data: schemas.Complaint_post, db: Session = Depends(data
         "ticket_id": obj.ticket_id
     }
 @router.get('/complaint')
-def complaint_status(ticket_id:int,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
+def complaint_status(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(database.get_db)):
     c = db.get(models.Complaint,ticket_id)
     return {
         "status": True, 
