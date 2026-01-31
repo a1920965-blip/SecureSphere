@@ -12,7 +12,7 @@ from backend.core import api_services
 router=APIRouter()
 @router.get('/weather')
 def get_weather(user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
-    city=db.query(models.Resident).filter(models.Resident.user_id==user_id).first().city
+    city=db.query(models.Resident).filter(models.Resident.owner==user_id).first().city
     if city==None:
         city="Delhi"
     return api_services.weather_api(city)

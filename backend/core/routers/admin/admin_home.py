@@ -38,7 +38,7 @@ def dashboard(db:Session=Depends(database.get_db),admin=Depends(verfiy_admin)):
 def update_complaint(ticket_id:int,c_Data:schemas.Complaint_update,admin=Depends(verfiy_admin),db:Session=Depends(database.get_db)):
     comp=db.get(models.Complaint,ticket_id)
     if comp==None:
-        return "Invlaid Token"
+        raise Content_Not_Found("Invalid Request")
     elif comp.status.upper()=="APPROVED":
         return "Already Aprroved"
     elif comp.status.upper()=="PENDING":
@@ -48,7 +48,7 @@ def update_complaint(ticket_id:int,c_Data:schemas.Complaint_update,admin=Depends
     else:
         raise Content_Not_Found("Invalid Request")
 
-@router.put('/epass/action')
+@router.put('/epass/action',status_code=status.HTTP_204_NO_CONTENT)
 def update_epasses(ticket_id:str,e_data:schemas.Epass_update,admin=Depends(verfiy_admin),db:Session=Depends(database.get_db)):
     epass=db.get(models.Epass,ticket_id)
     if epass==None or epass.status.upper()!="PENDING":
