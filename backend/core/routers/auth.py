@@ -5,26 +5,19 @@ from backend.core.exception.custom_exceptions import Credential_Exception
 from sqlalchemy.orm import Session
 from backend.core.o2auth import create_Access_token,verify_token,get_current_user
 import os
-
+from fastapi.security import OAuth2PasswordRequestForm
 router=APIRouter(tags=["Authentication"])
 
-@router.get('/login')
-def user_login(request:Request):
-    return "this is login page" 
-
-@router.post('/login')
-def validate_login(credential:schemas.UserAuth,db:Session=Depends(database.get_db)):
-    user=db.get(models.Auth,credential.user_id)
+@router.post('/login',status_code=status.HTTP_202_ACCEPTED)
+def validate_login(credential:OAuth2PasswordRequestForm=Depends(),db:Session=Depends(database.get_db)):
+    user=db.get(models.Auth,credential.username)
     if user==None or not utils.verify(credential.password,user.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Credential!")
-    token=create_Access_token({"user_id":credential.user_id})
-    return {"status":True,"token":token,"user_id": credential.user_id}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid Credential user not found!")
+    token=create_Access_token({"user_id":credential.username})
+    return {"access_token": token,"token_type": "bearer"}
 
-@router.get('/register')
-def user_register(request:Request):
-    pass
-@router.post('/register')
-def validate_user_registration(user_data:schemas.NewUser,db:Session=Depends(database.get_db)):
+@router.post('/register',response_model=schemas.User_registration_response,status_code=status.HTTP_201_CREATED)
+def validate_user_registration(user_data:schemas.Validate_user_registration,db:Session=Depends(database.get_db)):
     existing=db.get(models.Auth,user_data.user_id)
     if existing:
         raise Credential_Exception("User Already Exit")

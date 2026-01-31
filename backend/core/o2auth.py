@@ -5,11 +5,12 @@ from datetime import datetime,timedelta
 from jose import JWTError,jwt,ExpiredSignatureError
 import os
 Oauth2=OAuth2PasswordBearer(tokenUrl="login")
-def create_Access_token(user_credentail:schemas.UserAuth):
+def create_Access_token(user_credentail:dict):
     to_encode=user_credentail.copy()
     expire=datetime.utcnow() + timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
     to_encode.update({"exp":expire})
     access_token=jwt.encode(to_encode,os.getenv("SECRET_KEY"),algorithm=os.getenv("ALGORITHM"))
+    print(access_token)
     return access_token
 def verify_token(token: str):
     try:
