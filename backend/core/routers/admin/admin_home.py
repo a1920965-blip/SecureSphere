@@ -61,7 +61,7 @@ def update_epasses(ticket_id:str,e_data:schemas.Epass_update,admin=Depends(verfi
         Qr=utils.generate_qr_code(guest_id)
         token_obj=models.Token(user_id=guest_id,token=Qr["data"],token_id=Qr["token_id"])
         db.add(token_obj)
-        db.commit(token_obj)
+        db.commit()
         db.refresh(token_obj)
     db.commit()
 
