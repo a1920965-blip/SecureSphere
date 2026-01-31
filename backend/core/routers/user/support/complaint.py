@@ -5,7 +5,7 @@ from backend.core.o2auth import create_Access_token,verify_token,get_current_use
 router=APIRouter(tags=["Complaint"])
 
 @router.post('/complaint')
-def complaint_post(user_data: schemas.Complaint, db: Session = Depends(database.get_db), user=Depends(get_current_user)):
+def complaint_post(user_data: schemas.Complaint_post, db: Session = Depends(database.get_db), user=Depends(get_current_user)):
     obj = models.Complaint(
         user_id=user,
         category=user_data.category,
