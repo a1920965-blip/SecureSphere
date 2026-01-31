@@ -6,9 +6,9 @@ from backend.core.o2auth import create_Access_token,verify_token,get_current_use
 
 router=APIRouter(tags=["QrCode/Token Valdation"])
 
-@router.get('/verify/{token}')
-def token_verify(token:str,db:Session=Depends(database.get_db)):
-    user=db.get(models.Token,token)
+@router.get('/verify/')
+def token_verify(token_id:str,db:Session=Depends(database.get_db)):
+    user=db.query(models.Token).filter(models.Token.token_id==token_id)
     if user==None:
         raise Credential_Exception("Invalid Token")
     return {"status":True,"message":"Verifyed user"}
