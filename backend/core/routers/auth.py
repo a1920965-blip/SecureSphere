@@ -14,7 +14,7 @@ def validate_login(credential:OAuth2PasswordRequestForm=Depends(),db:Session=Dep
     if user==None or not utils.verify(credential.password,user.password):
         raise Content_Not_Found("Invalid Credential user not found!")
     token=create_Access_token({"user_id":credential.username,"role":user.role})
-    return {"access_token": token,"token_type": "bearer"}
+    return {"status":True,"role":user.role,"user_id":user.user_id,"access_token": token,"token_type": "bearer",}
 
 @router.post('/user/register',response_model=schemas.User_registration_response,status_code=status.HTTP_201_CREATED)
 def validate_user_registration(f_data:schemas.Validate_user_registration,db:Session=Depends(database.get_db)):
