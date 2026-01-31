@@ -1,7 +1,9 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
+from backend.core.exception.custom_exceptions import Content_Not_Found
 from sqlalchemy.orm import Session
 from backend.core.o2auth import verify_user
+from sqlalchemy import and_
 router=APIRouter(tags=["E-Pass"])
 
 @router.post('/epass')
@@ -16,10 +18,10 @@ def Epass_post(user_data:schemas.Epass_post,user_id=Depends(verify_user),db:Sess
     return {"status":True,"message":"Request Submited","ticket_id":obj.ticket_id}
 @router.get('/epass')
 def Epass_get(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(database.get_db)):
-    e = db.query(models.Epass).filter(models.Epass.ticket_id == ticket_id).first()
+    e = db.query(models.Epass).filter(and_(models.Epass.ticket_id == ticket_id,models.Epass.user_id==user_id)).first()
     print(user_id)
     if e==None:
-        return {"status":False,"msg":"Invalid Ticket id"}
+        raise Content_Not_Found("Invalid Ticket Id")
     data={
             "ticket_id": e.ticket_id,
             "guest_name": e.guest_name,
@@ -31,12 +33,8 @@ def Epass_get(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(
             "status": e.status,
             "remark": e.remark
         }
-    
     if e.status.upper()=="APPROVED":
         guest_id=e.guest_name.strip().lower()
         t=db.query(models.Token).filter(models.Token.user_id==guest_id).first()
         data.update({"qr_data":t.token_id})
-    return {
-        "status": True,
-        "data": data
-    }
+    return {"status": True,"data": data}

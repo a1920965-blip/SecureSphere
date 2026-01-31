@@ -1,5 +1,6 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
+from backend.core.exception.custom_exceptions import Content_Not_Found
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from backend.core.o2auth import verify_user
@@ -10,8 +11,10 @@ from backend.core import api_services
 
 router=APIRouter()
 @router.get('/weather')
-def get_weather(city: str = "Mumbai", user_id=Depends(verify_user)):
-    """Get weather data for dashboard"""
+def get_weather(user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
+    city=db.query(models.Personal).filter(models.Personal.user_id==user_id).fist().city
+    if city==None:
+        city="Delhi"
     return api_services.weather_api(city)
 #home page of user 
 @router.get('/notice')
@@ -24,7 +27,7 @@ def user_notice(user_id=Depends(verify_user),db:Session=Depends(database.get_db)
 def user_profile(db: Session = Depends(database.get_db), user_id=Depends(verify_user)):
     auth_user = db.get(models.Auth, user_id)
     if not auth_user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise Content_Not_Found("User not found")
     
     # Load relationships
     personal = auth_user.personal[0] if auth_user.personal else None
@@ -87,7 +90,7 @@ def add_vehicle(user_data:schemas.Add_vehicle,user_id=Depends(verify_user),db:Se
 def delete_vehicle(user_data:schemas.Delete_vehicle,user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     obj=db.get(models.Vehicle,(user_id,user_data.number))
     if obj==None:
-        return {'status':False,"message":f"vehicle does not exit of number: {user_data.number}"}
+        raise Content_Not_Found(f"Vehicle does not exit of number: {user_data.number}")
     db.delete(obj)
     db.commit()
     return {'status':True,"message":"vehicle delete  succesfully"}

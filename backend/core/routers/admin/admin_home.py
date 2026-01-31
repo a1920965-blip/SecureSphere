@@ -1,9 +1,9 @@
 from fastapi import APIRouter,status,HTTPException,Request,Depends,status
 from backend.core import schemas,database,models
 from backend.core import utils
-from backend.core.o2auth import get_current_user,verfiy_admin
+from backend.core.exception.custom_exceptions import Content_Not_Found
+from backend.core.o2auth import verfiy_admin
 from sqlalchemy.orm import Session
-from backend.core.o2auth import create_Access_token,verify_token,get_current_user
 import os
 
 router=APIRouter()
@@ -45,14 +45,14 @@ def update_complaint(ticket_id:int,c_Data:schemas.Complaint_update,admin=Depends
         comp.status=c_Data.status
         comp.remark=c_Data.remark
         db.commit()
-        return {"status":True}
     else:
-        return {"status":False,"mesage":"Invalid Request"}
+        raise Content_Not_Found("Invalid Request")
+
 @router.put('/epass/action')
 def update_epasses(ticket_id:str,e_data:schemas.Epass_update,admin=Depends(verfiy_admin),db:Session=Depends(database.get_db)):
     epass=db.get(models.Epass,ticket_id)
     if epass==None or epass.status.upper()!="PENDING":
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise Content_Not_Found("Invalid Request")
     epass.status=e_data.status
     epass.remark= e_data.remark
     token_obj=None
@@ -61,11 +61,9 @@ def update_epasses(ticket_id:str,e_data:schemas.Epass_update,admin=Depends(verfi
         Qr=utils.generate_qr_code(guest_id)
         token_obj=models.Token(user_id=guest_id,token=Qr["data"],token_id=Qr["token_id"])
         db.add(token_obj)
-        db.commitoken_obj()
+        db.commit(token_obj)
         db.refresh(token_obj)
     db.commit()
-    return {"status":True,"Data":token_obj if token_obj else None}
-
 
 
     
