@@ -5,7 +5,7 @@ from backend.core.o2auth import create_Access_token,verify_token,get_current_use
 router=APIRouter(tags=["E-Pass"])
 
 @router.post('/epass')
-def Epass_post(user_data:schemas.Epass,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
+def Epass_post(user_data:schemas.Epass_post,user_id=Depends(get_current_user),db:Session=Depends(database.get_db)):
     obj=models.Epass(user_id=user_id,vehicle_no=user_data.vehicle_no,
                     contact=user_data.contact,guest_name=user_data.name,
                     purpose=user_data.purpose,arrival=user_data.arrival,
@@ -16,9 +16,10 @@ def Epass_post(user_data:schemas.Epass,user_id=Depends(get_current_user),db:Sess
 @router.get('/epass')
 def Epass_get(ticket_id:int,user_id=Depends(get_current_user), db: Session = Depends(database.get_db)):
     e = db.query(models.Epass).filter(models.Epass.ticket_id == ticket_id).first()
-    return {
-        "status": True,
-        "data": {
+    print(user_id)
+    if e==None:
+        return {"status":False,"msg":"Invalid Ticket id"}
+    data={
             "ticket_id": e.ticket_id,
             "guest_name": e.guest_name,
             "purpose": e.purpose,
@@ -29,4 +30,12 @@ def Epass_get(ticket_id:int,user_id=Depends(get_current_user), db: Session = Dep
             "status": e.status,
             "remark": e.remark
         }
+    
+    if e.status.upper()=="APPROVED":
+        guest_id=e.guest_name.strip().lower()
+        t=db.query(models.Token).filter(models.Token.user_id==guest_id).first()
+        data.update({"qr_data":t.token_id})
+    return {
+        "status": True,
+        "data": data
     }
