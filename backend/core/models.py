@@ -61,7 +61,7 @@ class Epass(Base):
 class Token(Base):
     __tablename__="token"
     token=Column(String,nullable=False)
-    user_id=Column(String,ForeignKey("auth.user_id",ondelete="CASCADE"),nullable=False)
+    user_id=Column(String,nullable=False)
     token_id=Column(String,primary_key=True,nullable=False)
 
 class User_logs(Base):
