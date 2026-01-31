@@ -3,14 +3,17 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional,List
 
-class UserAuth(BaseModel):
+
+
+#-------------------------auth----------------------------------------------------------------------------------------#
+class Validate_login(BaseModel):
     user_id:str
     password:str
     def as_form(cls,user_id:str=Form(...),
                     password:str=Form(...)):
         return cls(user_id=user_id,password=password)
 
-class NewUser(UserAuth):
+class Validate_user_registration(Validate_login):
     contact:str
     email:str
     name:str
@@ -20,24 +23,13 @@ class NewUser(UserAuth):
                     email:str=Form(...),
                     name:str=Form(...)):
         return cls(contact=contact,name=name,email=email,user_id=user_id,password=password)
-class UserOut(BaseModel):
+class LoginOut(BaseModel):
     user_id:str
-    email:str
-    contact:str
+    status:bool
+    token:str
 
-class UserDetail(BaseModel):
-    user_id:str
-    name:str
-    contact:str
-    email:str
-    department:str=None
-    designation:str=None
-    house_no:str=None
-    block:str=None
-    city:str=None
-    pincode:str=None
-    state:str=None
 
+#----------------------------------------USER SCEHMAS---------------------------------------------------------------#
 class Personal(BaseModel):
     name:str
     contact:str
@@ -51,15 +43,20 @@ class Resident(BaseModel):
     pincode:str=None
     state:str=None 
 
-class Vehicle(BaseModel):
+class Add_vehicle(BaseModel):
     number:str
 
-class Complaint(BaseModel):
+class Delete_vehicle(BaseModel):
+    number:str
+
+         #---------------------------USER SUPPORT SCHEMAS--------------------#
+
+class Complaint_post(BaseModel):
     category:str
     description:str
     subject:str
     attachment:str
-class Epass(BaseModel):
+class Epass_post(BaseModel):
     user_id:str
     vehicle_no:Optional[str]
     contact:str
@@ -67,13 +64,33 @@ class Epass(BaseModel):
     purpose:Optional[str]
     arrival:Optional[str]="Not Specified"
     departure:Optional[str]="Not Specified"
+
+
+
+#------------------------------------------------ADMIN SCHEMAS-------------------------------------------------------#
+class Complaint_update(BaseModel):
+    user_id:str
+    category:str   
+    description:str
+    subject:Optional[str]=None
+    attachment:Optional[str]=None
+    status:str
+    remark:Optional[str]=None
     
-class Token(BaseModel):
-    token:str
+class Epass_update(BaseModel):
+    guest_name:str
+    purpose:str
+    arrival:str
+    departure:str
+    contact:str
+    vehicle_no:Optional[str]=None
+    status:str
+    remark:Optional[str]=None
 
 
 
 
-
-
-
+#---------------------------------------Response Model--------------------------------------------#
+class User_registration_response(BaseModel):
+    status:bool
+    message:str
