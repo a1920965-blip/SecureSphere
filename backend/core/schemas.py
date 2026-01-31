@@ -10,20 +10,11 @@ class Validate_login(BaseModel):
     user_id:str
     password:str
     admin_code:Optional[str]
-    def as_form(cls,user_id:str=Form(...),
-                    password:str=Form(...)):
-        return cls(user_id=user_id,password=password)
 
 class Validate_user_registration(Validate_login):
     contact:str
     email:str
     name:str
-    def as_form(cls,user_id:str=Form(...),
-                    password:str=Form(...),
-                    contact:str=Form(...),
-                    email:str=Form(...),
-                    name:str=Form(...)):
-        return cls(contact=contact,name=name,email=email,user_id=user_id,password=password)
 class LoginOut(BaseModel):
     user_id:str
     status:bool
