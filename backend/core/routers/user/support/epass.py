@@ -36,5 +36,5 @@ def Epass_get(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(
     if e.status.upper()=="APPROVED":
         guest_id=e.guest_name.strip().lower()
         t=db.query(models.Token).filter(models.Token.user_id==guest_id).first()
-        data.update({"qr_data":t.token_id})
+        data.update({"qr_data":t.token})
     return {"success": True,"data": data}
