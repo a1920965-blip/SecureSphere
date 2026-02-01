@@ -2,7 +2,7 @@ from fastapi import APIRouter,status,HTTPException,Request,Depends,status
 from backend.core import schemas,database,models
 from backend.core import utils
 from backend.core.exception.custom_exceptions import Content_Not_Found
-from backend.core.o2auth import verify_admin
+from backend.core.oauth2 import verify_admin
 from sqlalchemy.orm import Session
 import os
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
 from backend.core import database,models
 from .import epass,complaint
-from backend.core.o2auth import verify_user
+from backend.core.oauth2 import verify_user
 
 router=APIRouter(prefix="/support")
 @router.get('/status/')

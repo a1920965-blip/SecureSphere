@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends,status
 from sqlalchemy.orm import Session
-from backend.core.o2auth import verify_admin
+from backend.core.oauth2 import verify_admin
 from ...import database,models,schemas
 router=APIRouter()
 # will be available soon

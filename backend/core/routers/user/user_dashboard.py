@@ -3,7 +3,7 @@ from backend.core import schemas,utils,database,models
 from backend.core.exception.custom_exceptions import Content_Not_Found
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from backend.core.o2auth import verify_user
+from backend.core.oauth2 import verify_user
 # backend.core/routers/user/user_dashboard.py
 
 from backend.core import api_services 

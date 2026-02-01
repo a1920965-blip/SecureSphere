@@ -2,7 +2,7 @@ from fastapi import APIRouter,status,HTTPException,Request,Depends
 from backend.core import schemas,utils,database,models
 from backend.core.exception.custom_exceptions import Content_Not_Found
 from sqlalchemy.orm import Session
-from backend.core.o2auth import verify_user
+from backend.core.oauth2 import verify_user
 from sqlalchemy import and_
 router=APIRouter(tags=["E-Pass"])
 

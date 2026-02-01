@@ -3,7 +3,7 @@ from backend.core import schemas,database,models
 from backend.core import utils
 from backend.core.exception.custom_exceptions import Credential_Exception,Content_Not_Found
 from sqlalchemy.orm import Session
-from backend.core.o2auth import create_Access_token
+from backend.core.oauth2 import create_Access_token
 import os
 from fastapi.security import OAuth2PasswordRequestForm
 router=APIRouter(prefix="/auth",tags=["Authentication"])
