@@ -1,7 +1,7 @@
 // API Handler
 class API {
     constructor() {
-        this.baseURL = 'http://localhost:8000'; // Change this to your backend URL
+        this.baseURL = 'http://0.0.0.0:8000'; // Change this to your backend URL
     }
 
     // Get authorization header
