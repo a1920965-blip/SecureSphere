@@ -10,3 +10,7 @@ def post_notice(n_data:schemas.Post_notice,admin=Depends(verify_admin),db:Sessio
     db.add(n) 
     db.commit()
     return {"success":True,"message":"Notice posted Successfully"}
+@router.get('/notice')
+def get_notice(db:Session=Depends(database.get_db),admin=Depends(verify_admin)):
+    notices=db.query(models.Notices).all()
+    return{"status":True,"data":notices}
