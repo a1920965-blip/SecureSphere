@@ -38,7 +38,7 @@ def validate_admin_registration(f_data:schemas.Validate_admin_registration,db:Se
     existing=db.get(models.Auth,f_data.user_id)
     if existing:
         raise Credential_Exception("Admin Already Exit")
-    if f_data.code!=os.getenv("admin_code"):
+    if f_data.admin_key!=os.getenv("admin_code"):
         raise Credential_Exception("Wrong Security code!")
     else:
         auth=models.Auth(user_id=f_data.user_id,password=utils.hash(f_data.password),role="ADMIN")
