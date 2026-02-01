@@ -4,7 +4,7 @@ from backend.core import schemas
 from datetime import datetime,timedelta
 from jose import JWTError,jwt,ExpiredSignatureError
 import os
-Oauth2=OAuth2PasswordBearer(tokenUrl="login")
+Oauth2=OAuth2PasswordBearer(tokenUrl="/auth/login")
 def create_Access_token(user_credentail:dict):
     to_encode=user_credentail.copy()
     expire=datetime.utcnow() + timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
@@ -34,7 +34,8 @@ def verify_token(token: str):
         )
 def get_current_user(token:str=Depends(Oauth2)):
     return verify_token(token)
-def verfiy_admin(current_user:dict=Depends(get_current_user)):
+
+def verify_admin(current_user:dict=Depends(get_current_user)):
     if current_user["role"]!="ADMIN":
           raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
@@ -42,7 +43,7 @@ def verfiy_admin(current_user:dict=Depends(get_current_user)):
         )
     return current_user
 def verify_user(current_user:dict=Depends(get_current_user)):
-    if current_user["role"]!="USER":
+    if current_user["role"].upper()!="USER":
           raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail="Not authorized to perform User action"
