@@ -1,6 +1,6 @@
 // Authentication Handler
 const auth = {
-    BASE_URL: 'http://localhost:8000',
+    BASE_URL: 'http://192.168.250.187:8000',
 
     // ─── Cookie Helpers ───────────────────────────────────────────
     getCookie(name) {
