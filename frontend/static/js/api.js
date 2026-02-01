@@ -131,6 +131,9 @@ class API {
     async getAdminDashboard() {
         return await this.call('/admin/');
     }
+    async getUsersActivity(){
+        return await this.call('/admin/users/logs')
+    }
 
     async updateComplaint(ticketId, data) {
         return await this.call(`/admin/complaint/action?ticket_id=${ticketId}`, {
@@ -151,6 +154,10 @@ class API {
             method: 'POST',
             body: JSON.stringify(data)
         });
+    }
+
+    async getAdminNotices() {
+        return await this.call('/admin/notice');
     }
 
     async getUsers() {

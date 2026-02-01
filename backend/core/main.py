@@ -9,6 +9,7 @@ from backend.core.routers.user import user
 import os
 from dotenv import load_dotenv
 load_dotenv()
+
 app=FastAPI()
 
 BASE_DIR=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -30,3 +30,4 @@ def generate_qr_code(user_id: str) -> str:
     img.save(buffer, format="PNG")
     qr_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
     return {"data":qr_base64,"token_id":token_id}
+

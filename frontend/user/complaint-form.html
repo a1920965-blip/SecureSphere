@@ -207,7 +207,7 @@
             // For now we include a flag so backend knows attachment was intended
             if (selectedFile) {
                 payload.has_attachment = true;
-                // Future: payload.attachment = await fileToBase64(selectedFile);
+                payload.attachment = await fileToBase64(selectedFile);
             }
 
             const result = await api.submitComplaint(payload);
