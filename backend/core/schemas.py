@@ -9,15 +9,13 @@ from typing import Optional,List
 class Validate_login(BaseModel):
     user_id:str
     password:str
-    admin_code:Optional[str]
-
 class Validate_user_registration(Validate_login):
     contact:str
     email:str
     name:str
 class LoginOut(BaseModel):
     user_id:str
-    status:bool
+    success:bool
     token:str
 
 
@@ -47,7 +45,8 @@ class Complaint_post(BaseModel):
     category:str
     description:str
     subject:str
-    attachment:str
+    attachment:Optional[str]=None
+
 class Epass_post(BaseModel):
     vehicle_no:Optional[str]
     contact:str
@@ -64,21 +63,10 @@ class Validate_admin_registration(BaseModel):
     password:str
     code:str
 class Complaint_update(BaseModel):
-    user_id:str
-    category:str   
-    description:str
-    subject:Optional[str]=None
-    attachment:Optional[str]=None
     status:str
     remark:Optional[str]=None
     
 class Epass_update(BaseModel):
-    guest_name:str
-    purpose:str
-    arrival:str
-    departure:str
-    contact:str
-    vehicle_no:Optional[str]=None
     status:str
     remark:Optional[str]=None
 
@@ -90,5 +78,5 @@ class Post_notice(BaseModel):
 
 #---------------------------------------Response Model--------------------------------------------#
 class User_registration_response(BaseModel):
-    status:bool
+    success:bool
     message:str
