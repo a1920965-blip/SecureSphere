@@ -31,7 +31,7 @@ def dashboard(db:Session=Depends(database.get_db),admin=Depends(verify_admin)):
             "vehicle_no": e.vehicle_no,
             "status": e.status,
             "remark": e.remark} for e in epasses] if epasses else None, 
-            "User_logs":[{ "user_id":l.user_id,"log_id":l.logs_id,
+            "logs":[{ "user_id":l.user_id,"log_id":l.logs_id,
                         "Name":l.name,"action":l.action} for l in logs] if logs else None
     }}
 @router.put('/complaint/action')
