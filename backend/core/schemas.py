@@ -1,5 +1,5 @@
-from fastapi import Form
 from pydantic import BaseModel
+from fastapi import Form,File
 from datetime import datetime
 from typing import Optional,List
 
@@ -39,13 +39,13 @@ class Add_vehicle(BaseModel):
 class Delete_vehicle(BaseModel):
     number:str
 
-         #---------------------------USER SUPPORT SCHEMAS--------------------#
-
+         #---------------------------USER SUPPORT SCHEMAS--------------------
 class Complaint_post(BaseModel):
     category:str
     description:str
     subject:str
-    attachment:Optional[str]=None
+    has_attachment: Optional[bool] = False
+    attachment: Optional[str] = None
 
 class Epass_post(BaseModel):
     vehicle_no:Optional[str]
@@ -61,7 +61,7 @@ class Epass_post(BaseModel):
 class Validate_admin_registration(BaseModel):
     user_id:str
     password:str
-    code:str
+    admin_key:str
 class Complaint_update(BaseModel):
     status:str
     remark:Optional[str]=None
