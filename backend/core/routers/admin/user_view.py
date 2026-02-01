@@ -1,19 +1,19 @@
 from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
-from backend.core.o2auth import verfiy_admin
+from backend.core.o2auth import verify_admin
 from backend.core import database,models
 router=APIRouter()
 @router.get('/users')
-def list_users(admin=Depends(verfiy_admin),db:Session=Depends(database.get_db)):
+def list_users(admin=Depends(verify_admin),db:Session=Depends(database.get_db)):
     users=db.query(models.Personal.user_id,models.Personal.Name).all()
-    return {"status":True,"users":[{"user_id":u.user_id,"Name":u.Name} for u in users] if users else None}
+    return {"success":True,"data":[{"user_id":u.user_id,"Name":u.Name} for u in users] if users else None}
 @router.get('/user/')
-def user_profile(user_id:str,db:Session=Depends(database.get_db),admin=Depends(verfiy_admin)):
+def user_profile(user_id:str,db:Session=Depends(database.get_db),admin=Depends(verify_admin)):
     user=db.get(models.Auth,user_id)
     personal= user.personal[0] if user.personal else None
     resident= user.resident[0] if user.resident else None
     vehicle= user.vehicle
-    return {"status":True,
+    return {"success":True,
                 "data":{"user_id":user.user_id,
                         "Name":personal.Name,
                         "designation": personal.designation if personal.designation else None,

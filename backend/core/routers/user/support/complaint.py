@@ -20,7 +20,7 @@ def complaint_post(user_data: schemas.Complaint_post, db: Session = Depends(data
     db.refresh(obj)  # Get the auto-generated complaint_id
     
     return {
-        "status": True, 
+        "success": True, 
         "message": "Complaint submitted successfully!",
         "ticket_id": obj.ticket_id
     }
@@ -30,7 +30,7 @@ def complaint_status(ticket_id:int,user_id=Depends(verify_user), db: Session = D
     if c is None:
         raise Content_Not_Found("Complaint not found or you don't have access to it")
     return {
-        "status": True, 
+        "success": True, 
         "data": {
             "ticket_id": c.ticket_id,
             "category": c.category,

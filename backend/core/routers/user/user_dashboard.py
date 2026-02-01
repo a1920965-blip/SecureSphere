@@ -12,30 +12,33 @@ from backend.core import api_services
 router=APIRouter()
 @router.get('/weather')
 def get_weather(user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
-    city=db.query(models.Resident).filter(models.Resident.owner==user_id).first().city
-    if city==None:
+    user=db.query(models.Resident).filter(models.Resident.owner==user_id).first()
+    city=None
+    if user==None or user.city==None:
         city="Delhi"
-    return api_services.weather_api(city)
+    else:
+        city=user.city
+    data=api_services.weather_api(city)
+    return {"success":True,"data":data}
 #home page of user 
 @router.get('/notice')
 def user_notice(user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     notices = db.query(models.Notices).filter(or_(models.Notices.user == user_id, models.Notices.user == "*")).all()    
     data=[{"Type":n.Type,"Body":n.body} for n in notices] if notices else None
-    return {"status":True,"data":data}
+    return {"success":True,"data":data}
 
 @router.get('/profile/')
 def user_profile(db: Session = Depends(database.get_db), user_id=Depends(verify_user)):
     auth_user = db.get(models.Auth, user_id)
     if not auth_user:
         raise Content_Not_Found("User not found")
-    
-    # Load relationships
     personal = auth_user.personal[0] if auth_user.personal else None
     resident = auth_user.resident[0] if auth_user.resident else None
     user_qrcode=db.query(models.Token).filter(models.Token.user_id==auth_user.user_id).first()
     vehicles = auth_user.vehicle
+    print("backend is fine")
     return {
-        "status": True,
+        "success": True,
         "data": {
             "qr_data":user_qrcode.token,
             "user_id": auth_user.user_id,
@@ -62,7 +65,7 @@ def update_personal(user_data:schemas.Personal,user_id=Depends(verify_user),db:S
     user.designation=user_data.designation
     user.department=user_data.department
     db.commit()
-    return {'status':True,"message":"Details Updates succesfully"}
+    return {"success":True,"message":"Details Updates succesfully"}
 
 @router.put('/resident/')
 def update_resident(user_data:schemas.Resident,user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
@@ -78,14 +81,14 @@ def update_resident(user_data:schemas.Resident,user_id=Depends(verify_user),db:S
         user.state=user_data.state
         user.pincode=user_data.pincode
     db.commit()
-    return {'status':True,"message":"Details Updates succesfully"}
+    return {"success":True,"message":"Details Updates succesfully"}
 
 @router.post('/vehicle/add/')
 def add_vehicle(user_data:schemas.Add_vehicle,user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     obj=models.Vehicle(owner=user_id,number=user_data.number)
     db.add(obj)
     db.commit()
-    return {'status':True,"message":"vehicle added succesfully"}
+    return {"success":True,"message":"vehicle added succesfully"}
 @router.delete('/vehicle/remove/')
 def delete_vehicle(user_data:schemas.Delete_vehicle,user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     obj=db.get(models.Vehicle,(user_id,user_data.number))
@@ -93,6 +96,6 @@ def delete_vehicle(user_data:schemas.Delete_vehicle,user_id=Depends(verify_user)
         raise Content_Not_Found(f"Vehicle does not exit of number: {user_data.number}")
     db.delete(obj)
     db.commit()
-    return {'status':True,"message":"vehicle delete  succesfully"}
+    return {"success":True,"message":"vehicle delete  succesfully"}
 
 

@@ -10,4 +10,4 @@ def token_verify(token_id:str,db:Session=Depends(database.get_db)):
     user=db.query(models.Token).filter(models.Token.token_id==token_id).first()
     if user==None:
         raise Credential_Exception("Invalid Token")
-    return {"status":True,"message":"Verifyed user"}
+    return {"success":True,"message":"Verifyed user"}

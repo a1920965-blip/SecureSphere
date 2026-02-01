@@ -15,7 +15,7 @@ def Epass_post(user_data:schemas.Epass_post,user_id=Depends(verify_user),db:Sess
     db.add(obj)
     db.commit()
     db.refresh(obj)
-    return {"status":True,"message":"Request Submited","ticket_id":obj.ticket_id}
+    return {"success":True,"message":"Request Submited","ticket_id":obj.ticket_id}
 @router.get('/epass')
 def Epass_get(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(database.get_db)):
     e = db.query(models.Epass).filter(and_(models.Epass.ticket_id == ticket_id,models.Epass.user_id==user_id)).first()
@@ -37,4 +37,4 @@ def Epass_get(ticket_id:int,user_id=Depends(verify_user), db: Session = Depends(
         guest_id=e.guest_name.strip().lower()
         t=db.query(models.Token).filter(models.Token.user_id==guest_id).first()
         data.update({"qr_data":t.token_id})
-    return {"status": True,"data": data}
+    return {"success": True,"data": data}

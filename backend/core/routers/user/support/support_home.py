@@ -9,7 +9,7 @@ router=APIRouter(prefix="/support")
 def tickets_status(user_id=Depends(verify_user),db:Session=Depends(database.get_db)):
     complaint=db.query(models.Complaint).filter(models.Complaint.user_id==user_id).all()
     epasses=db.query(models.Epass).filter(models.Epass.user_id==user_id).all()
-    return {"status":True,
+    return {"success":True,
                     "data":{
                         "complaints":[{"ticket_id":c.ticket_id,
                                         "subject":c.subject,

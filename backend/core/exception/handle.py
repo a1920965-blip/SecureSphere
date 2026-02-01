@@ -6,10 +6,10 @@ def user_exception_handler(app):
 
     @app.exception_handler(Credential_Exception)
     def credential_handler(exec:Credential_Exception):
-        return JSONResponse(status_code=404,content={"status": False,"message": exec.message })
+        return JSONResponse(status_code=401,content={"success": False,"message": exec.message })
     @app.exception_handler(Content_Not_Found)
     def Content_Not_Found_handler(exec:Content_Not_Found):
-        return JSONResponse(status_code=404,content={"status":False,"message":exec.message})
+        return JSONResponse(status_code=404,content={"success":False,"message":exec.message})
 def jwt_exception_handler(app):
     pass
 
